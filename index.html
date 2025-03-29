@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Scramble Game</title>
     <style>
-        /* Colorful Gradient Background */
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -18,7 +17,6 @@
             padding: 20px;
         }
 
-        /* Vibrant Game Container */
         .game-container {
             background: white;
             border-radius: 15px;
@@ -31,7 +29,6 @@
             background: linear-gradient(to bottom, #ffffff 0%, #f8f9ff 100%);
         }
 
-        /* Colorful Title */
         h1 {
             color: #2c3e50;
             margin-bottom: 20px;
@@ -43,7 +40,7 @@
             font-size: 2.5rem;
         }
 
-        /* Neon Scoreboard */
+
         .scoreboard {
             display: flex;
             justify-content: space-around;
@@ -78,7 +75,7 @@
             display: inline-block;
         }
 
-        /* Scramble Display with Colorful Letters */
+
         .scramble-display {
             font-size: 2rem;
             letter-spacing: 0.5rem;
@@ -92,7 +89,6 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
         }
 
-        /* Hint Styling */
         .hint {
             font-size: 1.1rem;
             color: #7f8c8d;
@@ -104,7 +100,7 @@
             border-left: 4px solid #3498db;
         }
 
-        /* Animated Timer */
+
         .timer {
             font-size: 1.5rem;
             color: #e74c3c;
@@ -119,7 +115,6 @@
             to { transform: scale(1.05); }
         }
 
-        /* Stylish Input */
         .input-container {
             margin: 25px 0;
         }
@@ -143,7 +138,6 @@
             transform: scale(1.02);
         }
 
-        /* Colorful Buttons */
         .buttons {
             display: flex;
             justify-content: center;
@@ -181,7 +175,7 @@
             transform: translateY(1px);
         }
 
-        /* Message Styling */
+
         .message {
             margin-top: 25px;
             padding: 15px;
@@ -211,7 +205,7 @@
             border-left: 5px solid #dc3545;
         }
 
-        /* Instructions */
+
         .instructions {
             margin-top: 30px;
             color: #7f8c8d;
@@ -223,7 +217,7 @@
             border-top: 3px solid #f1c40f;
         }
 
-        /* Streak Indicator */
+ 
         .streak-indicator {
             display: inline-block;
             margin-left: 5px;
@@ -237,7 +231,7 @@
             to { text-shadow: 0 0 10px #ff5e00, 0 0 20px #ff0000; }
         }
 
-        /* Responsive Adjustments */
+  
         @media (max-width: 500px) {
             .scramble-display {
                 font-size: 1.5rem;
@@ -253,7 +247,7 @@
     </style>
 </head>
 <body>
-    <!-- Rest of your HTML remains exactly the same -->
+
     <div class="game-container">
         <h1>Word Scramble Game</h1>
         
@@ -293,9 +287,9 @@
         </div>
     </div>
 
-    <!-- JavaScript remains exactly the same -->
+
     <script>
-        // Game elements
+
         const scrambleDisplay = document.getElementById('scramble-display');
         const hintElement = document.getElementById('hint');
         const timerElement = document.getElementById('timer');
@@ -307,7 +301,7 @@
         const highScoreElement = document.getElementById('high-score');
         const streakElement = document.getElementById('streak');
 
-        // Game data
+   
         const words = [
     { word: "EXPANSION", hint: "The process of increase or grow" },
     { word: "CREATIVE", hint: "Relating to imagination and original ideas" },
@@ -384,7 +378,6 @@
 ];
 
 
-        // Game state
         let currentWord = "";
         let scrambledWord = "";
         let timeLeft = 30;
@@ -393,37 +386,36 @@
         let highScore = localStorage.getItem('highScore') || 0;
         let streak = 0;
 
-        // Initialize game
+       
         function initGame() {
-            // Reset timer
+            
             clearInterval(timer);
             timeLeft = 30;
             timerElement.textContent = `Time Left: ${timeLeft}s`;
             
-            // Clear input and message
+           
             userInput.value = "";
             messageElement.textContent = "";
             messageElement.className = "message";
             
-            // Select random word
+       
             const randomIndex = Math.floor(Math.random() * words.length);
             currentWord = words[randomIndex].word;
             
-            // Scramble the word
+           
             scrambledWord = scrambleWord(currentWord);
             scrambleDisplay.textContent = scrambledWord.split('').join(' ');
             
-            // Display hint
+         
             hintElement.textContent = `Hint: ${words[randomIndex].hint}`;
             
-            // Update scoreboard
+
             updateScoreboard();
             
-            // Start timer
+
             timer = setInterval(updateTimer, 1000);
         }
 
-        // Scramble a word
         function scrambleWord(word) {
             const letters = word.split('');
             for (let i = letters.length - 1; i > 0; i--) {
@@ -433,7 +425,7 @@
             return letters.join('');
         }
 
-        // Update timer
+
         function updateTimer() {
             timeLeft--;
             timerElement.textContent = `Time Left: ${timeLeft}s`;
@@ -448,36 +440,36 @@
             }
         }
 
-        // Update scoreboard
+      
         function updateScoreboard() {
             currentScoreElement.textContent = score;
             highScoreElement.textContent = highScore;
             streakElement.innerHTML = streak;
             
-            // Add fire emoji for streaks of 3 or more
+           
             if (streak >= 3) {
                 streakElement.innerHTML = `${streak}<span class="streak-indicator">🔥</span>`;
             }
         }
 
-        // Check user's answer
+       
         function checkAnswer() {
             const userAnswer = userInput.value.trim().toUpperCase();
             
             if (userAnswer === currentWord) {
-                // Correct answer
+                
                 clearInterval(timer);
                 messageElement.textContent = "Correct! Well done!";
                 messageElement.className = "message success";
                 
-                // Calculate points (bonus for faster answers)
+             
                 const pointsEarned = 10 + Math.floor(timeLeft / 3);
                 score += pointsEarned;
                 
-                // Update streak
+         
                 streak++;
                 
-                // Update high score if needed
+        
                 if (score > highScore) {
                     highScore = score;
                     localStorage.setItem('highScore', highScore);
@@ -486,7 +478,7 @@
                 updateScoreboard();
                 setTimeout(initGame, 2000);
             } else {
-                // Incorrect answer
+               
                 messageElement.textContent = "Incorrect. Try again!";
                 messageElement.className = "message error";
                 streak = 0;
@@ -498,7 +490,7 @@
             }
         }
 
-        // Event listeners
+    
         refreshBtn.addEventListener('click', () => {
             streak = 0;
             updateScoreboard();
@@ -512,7 +504,6 @@
             }
         });
 
-        // Start the game
         initGame();
     </script>
 </body>
