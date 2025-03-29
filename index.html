@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Scramble Game</title>
+    <style>
+        /* Colorful Gradient Background */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Vibrant Game Container */
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            border: 3px solid #e0e6ff;
+            background: linear-gradient(to bottom, #ffffff 0%, #f8f9ff 100%);
+        }
+
+        /* Colorful Title */
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            background: linear-gradient(45deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 2.5rem;
+        }
+
+        /* Neon Scoreboard */
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            background: rgba(255,255,255,0.8);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #e0e6ff;
+        }
+
+        .score-item {
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2c3e50;
+            background: rgba(255,255,255,0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            min-width: 50px;
+            display: inline-block;
+        }
+
+        /* Scramble Display with Colorful Letters */
+        .scramble-display {
+            font-size: 2rem;
+            letter-spacing: 0.5rem;
+            margin: 25px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e6f0ff 100%);
+            border-radius: 10px;
+            font-weight: bold;
+            border: 2px dashed #a5b8ff;
+            color: #34495e;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        /* Hint Styling */
+        .hint {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-style: italic;
+            padding: 10px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        /* Animated Timer */
+        .timer {
+            font-size: 1.5rem;
+            color: #e74c3c;
+            margin-bottom: 25px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        /* Stylish Input */
+        .input-container {
+            margin: 25px 0;
+        }
+
+        input {
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            width: 100%;
+            max-width: 300px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.9);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            transform: scale(1.02);
+        }
+
+        /* Colorful Buttons */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        #refresh-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        #check-btn {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* Message Styling */
+        .message {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-weight: bold;
+            animation: fadeIn 0.5s;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success {
+            background: linear-gradient(45deg, #d4edda, #c3e6cb);
+            color: #155724;
+            display: block;
+            border-left: 5px solid #28a745;
+        }
+
+        .error {
+            background: linear-gradient(45deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            display: block;
+            border-left: 5px solid #dc3545;
+        }
+
+        /* Instructions */
+        .instructions {
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            padding: 15px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 8px;
+            border-top: 3px solid #f1c40f;
+        }
+
+        /* Streak Indicator */
+        .streak-indicator {
+            display: inline-block;
+            margin-left: 5px;
+            font-weight: bold;
+            color: #e67e22;
+            animation: flame 0.5s infinite alternate;
+        }
+
+        @keyframes flame {
+            from { text-shadow: 0 0 5px #ff9a00; }
+            to { text-shadow: 0 0 10px #ff5e00, 0 0 20px #ff0000; }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 500px) {
+            .scramble-display {
+                font-size: 1.5rem;
+                letter-spacing: 0.3rem;
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Rest of your HTML remains exactly the same -->
+    <div class="game-container">
+        <h1>Word Scramble Game</h1>
+        
+        <div class="scoreboard">
+            <div class="score-item">
+                <div class="score-label">Score</div>
+                <div class="score-value" id="current-score">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">High Score</div>
+                <div class="score-value" id="high-score">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Streak</div>
+                <div class="score-value" id="streak">0<span class="streak-indicator">🔥</span></div>
+            </div>
+        </div>
+        
+        <div class="scramble-display" id="scramble-display"></div>
+        <div class="hint" id="hint"></div>
+        <div class="timer" id="timer">Time Left: 30s</div>
+        
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Enter your answer">
+        </div>
+        
+        <div class="buttons">
+            <button id="refresh-btn">Refresh Word</button>
+            <button id="check-btn">Check Word</button>
+        </div>
+        
+        <div class="message" id="message"></div>
+        
+        <div class="instructions">
+            <p>Unscramble the letters to form a valid word. You have 30 seconds to guess each word.</p>
+            <p>Use the hint if you get stuck!</p>
+        </div>
+    </div>
+
+    <!-- JavaScript remains exactly the same -->
+    <script>
+        // Game elements
+        const scrambleDisplay = document.getElementById('scramble-display');
+        const hintElement = document.getElementById('hint');
+        const timerElement = document.getElementById('timer');
+        const userInput = document.getElementById('user-input');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const checkBtn = document.getElementById('check-btn');
+        const messageElement = document.getElementById('message');
+        const currentScoreElement = document.getElementById('current-score');
+        const highScoreElement = document.getElementById('high-score');
+        const streakElement = document.getElementById('streak');
+
+        // Game data
+        const words = [
+    { word: "EXPANSION", hint: "The process of increase or grow" },
+    { word: "CREATIVE", hint: "Relating to imagination and original ideas" },
+    { word: "JAVASCRIPT", hint: "A programming language for the web" },
+    { word: "DEVELOPER", hint: "A person who writes computer programs" },
+    { word: "CHALLENGE", hint: "A task that tests someone's abilities" },
+    { word: "SOLUTION", hint: "A means of solving a problem" },
+    { word: "PROGRAMMING", hint: "The process of writing computer code" },
+    { word: "COMPUTER", hint: "An electronic device for processing data" },
+    { word: "ALGORITHM", hint: "A set of rules for solving a problem" },
+    { word: "FUNCTION", hint: "A self-contained module of code" },
+    { word: "VARIABLE", hint: "A storage location for data" },
+    { word: "DATABASE", hint: "An organized collection of data" },
+    { word: "ENCRYPTION", hint: "The process of converting data into a secure format" },
+    { word: "NETWORK", hint: "A system of interconnected devices" },
+    { word: "OPERATING", hint: "Software that manages computer hardware" },
+    { word: "PYTHON", hint: "A popular high-level programming language" },
+    { word: "FRAMEWORK", hint: "A platform for developing software applications" },
+    { word: "DEBUGGING", hint: "Finding and fixing errors in code" },
+    { word: "COMPILER", hint: "A program that translates code into machine language" },
+    { word: "SYNTAX", hint: "The rules of a programming language" },
+    { word: "GITHUB", hint: "A platform for version control and collaboration" },
+    { word: "TERMINAL", hint: "A command-line interface for interacting with a computer" },
+    { word: "BINARY", hint: "A number system using only 0s and 1s" },
+    { word: "LOOP", hint: "A control structure that repeats a block of code" },
+    { word: "ARRAY", hint: "A data structure that holds multiple values" },
+    { word: "OBJECT", hint: "An instance of a class in programming" },
+    { word: "RECURSION", hint: "A function calling itself" },
+    { word: "INDEX", hint: "A position reference in a data structure" },
+    { word: "ASYNC", hint: "Short for asynchronous, used in programming" },
+    { word: "REACT", hint: "A JavaScript library for building UI" },
+    { word: "NODEJS", hint: "A runtime environment for JavaScript outside the browser" },
+    { word: "JSON", hint: "A lightweight data-interchange format" },
+    { word: "HTTP", hint: "A protocol for transferring web pages" },
+    { word: "CSS", hint: "A language for styling web pages" },
+    { word: "HTML", hint: "The standard language for web pages" },
+    { word: "CACHE", hint: "A storage mechanism for quick data retrieval" },
+    { word: "AUTHENTICATION", hint: "Verifying user identity" },
+    { word: "TOKEN", hint: "A piece of data used for authentication" },
+    { word: "SESSION", hint: "A temporary data storage for user interaction" },
+    { word: "COOKIE", hint: "A small file stored by a web browser" },
+    { word: "FIREWALL", hint: "A security system that monitors network traffic" },
+    { word: "ROUTER", hint: "A device that forwards data packets" },
+    { word: "PROXY", hint: "An intermediary server for requests" },
+    { word: "DOMAIN", hint: "The address of a website" },
+    { word: "HOSTING", hint: "Providing storage and access for websites" },
+    { word: "SUBNET", hint: "A smaller network within a larger one" },
+    { word: "VPN", hint: "A secure private network over the internet" },
+    { word: "FIRMWARE", hint: "Software embedded in hardware" },
+    { word: "PATCH", hint: "An update to fix software bugs" },
+    { word: "BACKUP", hint: "A copy of data for recovery" },
+    { word: "MALWARE", hint: "Software designed to harm a computer" },
+    { word: "VIRUS", hint: "A malicious program that spreads in a system" },
+    { word: "SPAM", hint: "Unwanted or irrelevant messages" },
+    { word: "FISHING", hint: "A cyber-attack to steal information" },
+    { word: "HASHING", hint: "A process of converting data into a fixed-size value" },
+    { word: "PORT", hint: "A communication endpoint in networking" },
+    { word: "DEBUG", hint: "The process of fixing errors in code" },
+    { word: "STACK", hint: "A data structure following LIFO" },
+    { word: "QUEUE", hint: "A data structure following FIFO" },
+    { word: "GARBAGE", hint: "Automatic memory management in programming" },
+    { word: "THREAD", hint: "A unit of execution within a program" },
+    { word: "VIRTUAL", hint: "Not physically existing but simulated" },
+    { word: "SHELL", hint: "A command-line interface for an operating system" },
+    { word: "DATA", hint: "Information processed or stored by a computer" },
+    { word: "SCRIPT", hint: "A sequence of commands executed automatically" },
+    { word: "LOGIC", hint: "The reasoning behind coding decisions" },
+    { word: "SERVER", hint: "A computer that provides data to other computers" },
+    { word: "CLIENT", hint: "A device that requests data from a server" },
+    { word: "CLOUD", hint: "Remote servers storing data and applications" },
+    { word: "AI", hint: "Artificial intelligence, the simulation of human intelligence by machines" },
+    { word: "MACHINE", hint: "A device that performs tasks automatically" },
+    { word: "LEARNING", hint: "Acquiring knowledge or skills through experience" }
+];
+
+
+        // Game state
+        let currentWord = "";
+        let scrambledWord = "";
+        let timeLeft = 30;
+        let timer;
+        let score = 0;
+        let highScore = localStorage.getItem('highScore') || 0;
+        let streak = 0;
+
+        // Initialize game
+        function initGame() {
+            // Reset timer
+            clearInterval(timer);
+            timeLeft = 30;
+            timerElement.textContent = `Time Left: ${timeLeft}s`;
+            
+            // Clear input and message
+            userInput.value = "";
+            messageElement.textContent = "";
+            messageElement.className = "message";
+            
+            // Select random word
+            const randomIndex = Math.floor(Math.random() * words.length);
+            currentWord = words[randomIndex].word;
+            
+            // Scramble the word
+            scrambledWord = scrambleWord(currentWord);
+            scrambleDisplay.textContent = scrambledWord.split('').join(' ');
+            
+            // Display hint
+            hintElement.textContent = `Hint: ${words[randomIndex].hint}`;
+            
+            // Update scoreboard
+            updateScoreboard();
+            
+            // Start timer
+            timer = setInterval(updateTimer, 1000);
+        }
+
+        // Scramble a word
+        function scrambleWord(word) {
+            const letters = word.split('');
+            for (let i = letters.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [letters[i], letters[j]] = [letters[j], letters[i]];
+            }
+            return letters.join('');
+        }
+
+        // Update timer
+        function updateTimer() {
+            timeLeft--;
+            timerElement.textContent = `Time Left: ${timeLeft}s`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                messageElement.textContent = `Time's up! The word was: ${currentWord}`;
+                messageElement.className = "message error";
+                streak = 0;
+                updateScoreboard();
+                setTimeout(initGame, 3000);
+            }
+        }
+
+        // Update scoreboard
+        function updateScoreboard() {
+            currentScoreElement.textContent = score;
+            highScoreElement.textContent = highScore;
+            streakElement.innerHTML = streak;
+            
+            // Add fire emoji for streaks of 3 or more
+            if (streak >= 3) {
+                streakElement.innerHTML = `${streak}<span class="streak-indicator">🔥</span>`;
+            }
+        }
+
+        // Check user's answer
+        function checkAnswer() {
+            const userAnswer = userInput.value.trim().toUpperCase();
+            
+            if (userAnswer === currentWord) {
+                // Correct answer
+                clearInterval(timer);
+                messageElement.textContent = "Correct! Well done!";
+                messageElement.className = "message success";
+                
+                // Calculate points (bonus for faster answers)
+                const pointsEarned = 10 + Math.floor(timeLeft / 3);
+                score += pointsEarned;
+                
+                // Update streak
+                streak++;
+                
+                // Update high score if needed
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('highScore', highScore);
+                }
+                
+                updateScoreboard();
+                setTimeout(initGame, 2000);
+            } else {
+                // Incorrect answer
+                messageElement.textContent = "Incorrect. Try again!";
+                messageElement.className = "message error";
+                streak = 0;
+                updateScoreboard();
+                setTimeout(() => {
+                    messageElement.textContent = "";
+                    messageElement.className = "message";
+                }, 2000);
+            }
+        }
+
+        // Event listeners
+        refreshBtn.addEventListener('click', () => {
+            streak = 0;
+            updateScoreboard();
+            initGame();
+        });
+        
+        checkBtn.addEventListener('click', checkAnswer);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
